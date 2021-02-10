@@ -1,0 +1,79 @@
+.Header{                              
+                                                
+}   
+
+.app-name{
+    font-family: 'Londrina Solid', cursive;
+}                                         
+.nav-item-cst{
+    font-size:20px;
+    font-weight:bold;
+}
+.search-book{
+    z-index:995;
+    height:85vh;
+    width: min-content;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;    
+    background-color:rgb(255, 255, 255);
+    border-radius:15px;
+    width:350px;
+    position: fixed;
+    top:15;
+    right: 0;
+    
+    
+}
+.navbar-nav a{
+    color:#fff;
+    text-decoration: none;
+}
+.dropdown-menu a{
+    color:rgb(0, 0, 0);
+    text-decoration: none;
+    font-weight:800;
+}
+
+.button-search{
+    background-color: #1b1b1b; /* Green */
+    border:2px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    padding:10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    width:auto; 
+    border-radius:25px;
+    font-weight: 900;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: .5s;
+    height:50px;
+  }
+ 
+  .button-search:hover{
+     background-color:rgb(255, 255, 255);
+     color:#1b1b1b;
+     
+  }
+  .input-search{
+    background-color: #1b1b1b; /* Green */
+    border:2px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    padding:10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    width:50%; 
+    border-radius:25px;
+    font-weight: 900;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: .5s;
+    height:50px;
+    margin-right:5px;
+  }
+  .input-search:hover,:focus{
+    background-color:rgb(255, 255, 255);
+    color:#1b1b1b;
+  }

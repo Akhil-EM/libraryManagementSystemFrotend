@@ -1,0 +1,18 @@
+.ValidateError{   
+                               
+    
+    width: min-content;
+    white-space: nowrap;
+    border-radius:50%;
+    padding:6px;  
+    /* color: rgb(116, 116, 116); */
+    color:#fff;
+    font-weight: bold;
+    font-size:15px;
+    /* background-color: rgb(233, 233, 233); */
+    background-color:#eb4034ab;
+    margin-left: auto;
+    margin-right:0px;
+                  
+}                                               
+

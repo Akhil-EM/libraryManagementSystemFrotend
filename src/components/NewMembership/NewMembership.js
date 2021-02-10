@@ -13,6 +13,9 @@ class NewMembership extends React.Component {
     }
   }
 
+createNewMember=()=>{
+  log('create new member called !!');
+}
 updateButton=()=>{
   this.setState({spinnerDisplay:"",buttonDisplay:'none'});
 }

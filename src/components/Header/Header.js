@@ -1,7 +1,8 @@
 import React from 'react';                      
 import './Header.css';                 
 import {withRouter,useHistory} from "react-router-dom";
-  
+                                             
+import axios from 'axios'; 
 
 
 
@@ -12,7 +13,15 @@ class Header extends React.Component {
 
     this.state={
       searchDisplay:"none",
-      logoutMessageDisplay:'none', 
+      logoutMessageDisplay:'none',
+      searchBy:'name',
+      searchKey:'',
+      bookResultArray:[],
+      searchSpinnerDisplay:'none',
+      searchButtonDisplay:'',
+      searchBookNotFoundErrorDisplay:'none',
+      somethingWentWrongErrorDisplay:'none',
+      searchScrollerDisplay:'none'
     }
     this.checkLoginStatus();
   }
@@ -29,15 +38,15 @@ class Header extends React.Component {
      }
     
  }
-  searchBook=()=>{
-       this.setState({searchDisplay:'inline'});
-  }
+  // searchBook=()=>{
+  //      this.setState({searchDisplay:'inline'});
+  // }
   closeSeachBox=()=>{
     this.setState({searchDisplay:'none'})
   }
 
   navigteTo=(navigateTo)=>{
-      console.log(navigateTo);
+      // console.log(navigateTo);
         this.props.history.push(`/${navigateTo}`);
   }
   logoutBoxShow=()=>{
@@ -56,8 +65,65 @@ class Header extends React.Component {
     this.setState({logoutMessageDisplay:'none'});
  }
 
+ onInputChange=(e)=>{
+  // console.log(e.target.value);
+  this.setState({[e.target.name]:e.target.value});
+ }
+
+ searchBook=()=>{
+     if(this.state.searchKey===''){
+       alert('please enter book name !!');
+     }else{
+       this.communicateServer();
+     }
+ }
+
+ communicateServer=()=>{
+  this.showSerachSpinner();
+  this.setState({searchBookNotFoundErrorDisplay:'none',somethingWentWrongErrorDisplay:'none',searchScrollerDisplay:'none'})
+  let library_id=localStorage.getItem('userid');
+  axios.post("https://manage-library-backend.herokuapp.com/books/search",{
+   libraryId:library_id,
+   searchBy:this.state.searchBy,
+   searchKey:this.state.searchKey
+   })
+  .then( (response)=>{
+      this.hideSerachSpinner();
+      let feedback=response.data;
+       this.setState({searchDisplay:'inline'});
+      //  console.log(feedback);
+       
+      if(feedback.status=='error'){
+          this.setState({somethingWentWrongErrorDisplay:''});
+      }
+      if(feedback.status=='success'){
+           if((feedback.books).length===0){
+             this.setState({searchBookNotFoundErrorDisplay:''});
+           }else{
+               
+               this.setState({bookResultArray:feedback.books,searchScrollerDisplay:''});
+           }
+      }
+      
+      
+  })
+  .catch((error)=>{
+      // console.log(error);
+      this.hideSerachSpinner();
+      this.setState({searchDisplay:'inline',somethingWentWrongErrorDisplay:''});
+  });
 
 
+
+
+}
+
+ showSerachSpinner=()=>{
+    this.setState({searchSpinnerDisplay:'',searchButtonDisplay:'none'}) ;
+ }
+ hideSerachSpinner=()=>{
+    this.setState({searchSpinnerDisplay:'none',searchButtonDisplay:''});
+ }
 render() {     
   let fullUrl=window.location.href;
   if(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0){
@@ -104,33 +170,73 @@ render() {
                             </div>
                         </li>
                         <li className="nav-item">
-                          <a className="nav-link"onClick={this.logoutBoxShow}><p className="nav-item-cst" onClick={this.logoutBoxShow}>Logout </p></a>
+                          <a className="nav-link"onClick={this.logoutBoxShow}><p className="nav-item-cst" >Logout </p></a>
                         </li>
                       </ul>
                  
                   
                   <div className="d-flex">
-                    <input className="input-search" type="search" placeholder="Search a book"></input>
-                    <button className="button-search" onClick={this.searchBook} type="submit">Search</button>
+                        <input className="input-search"   type="search" name="searchKey" onChange={this.onInputChange} placeholder="Book name"></input>
+                    <div>
+                         <button className="button-search" style={{display:this.state.searchButtonDisplay}}  onClick={this.searchBook} type="submit">Search</button>
+                         <div className="spinner-border   spinner text-light" style={{display:this.state.searchSpinnerDisplay}}  role="status"></div>
+                    </div>
                   </div>
                 </div>
               </nav> 
+              
               <div className="search-book" style={{display:this.state.searchDisplay}}>
                  <div className="d-flex ">
                   <button type="button" className="btn btn-primary mt-3" onClick={this.closeSeachBox}>Close</button>
                   
                  </div>
                 <h1 className="text-center">Results</h1>
+                <div className="alert alert-danger text-center" style={{display:this.state.somethingWentWrongErrorDisplay}} role="alert">
+                  <b>Something went wrong try again.!!</b>
+                </div>
+                <div className="alert alert-danger text-center" style={{display:this.state.searchBookNotFoundErrorDisplay}} role="alert">
+                  <b>Sorry no books found.!!</b>
+                </div>
+                <div className="search-scroler" style={{display:this.state.searchScrollerDisplay}}>
+                      {
+                         this.state.bookResultArray.map((item,key)=>(
+                            <div className="search-book-card" key={key}>
+                               <h4 className="text-center">{item.name}</h4>
+                                <ul>
+                                  <li><h5>Author : {item.author}</h5></li>
+                                  <li><h5>Genre  : {item.genre}</h5></li>
+                                  <li><h5>Publisher  : {item.publisher}</h5></li>
+                                </ul>
+                                <div className="alert alert-danger text-center" role="alert" style={{display:!(item.isAvilable)?'':'none'}}>
+                                  <b>Book is not avialable</b>
+                                </div>
+                                <div className="alert alert-success text-center" role="alert" style={{display:(item.isAvilable)?'':'none'}}>
+                                  <b>Book is avialable</b>
+                                </div>
+                            </div>  
+                         ))
+                      }
+                    
+                    
+                       
+                </div>
+                    
               </div>
               
-               
-                <div className="error-message" style={{display:this.state.logoutMessageDisplay}}>
+              {/*  */}
+                <div className="error-message " style={{display:this.state.logoutMessageDisplay}}>
                       <h3 className="mt-3">Do you want to logout ?</h3>
                       <div className="d-flex justify-content-around mt-5">
                         <button className="button-common m-2" style={{display:this.state.buttonDisplay}} onClick={this.logOutUser}>yes</button>
                         <button className="button-common m-2" style={{display:this.state.buttonDisplay}} onClick={this.logoutBoxHide}>cancel</button>
                       </div>
                 </div> 
+                
+
+
+
+
+           
         </div>                           
     );                                          
  }                                              

@@ -1,8 +1,8 @@
 import React from 'react';                      
 import './Login.css';                 
 import {withRouter} from "react-router-dom";                                             
-import ValidateError from "../ValidateError/ValidateError"; 
 import axios from "axios";
+import ErrorImage from '../../images/error.svg';  
 class Login extends React.Component {
   
   
@@ -30,7 +30,7 @@ onFormSubmit=()=>{
   // console.log(this.state.email,this.state.password);
   let error=false;
 
-  if(! this.emeilVlidator(this.state.email)){
+  if(! this.emailValidator(this.state.email)){
     //  console.log(e.target.value);
     error=true;
      this.setState({emailErrorDisplay:'block',emailErrorMsg:'invalid email'});
@@ -63,7 +63,7 @@ onFormSubmit=()=>{
                 
             })
             .catch((error)=>{
-                console.log(error);
+                // console.log(error);
                 this.setState({buttonDisplay:'inline',spinnerDisplay:'none'});
             });
 
@@ -75,14 +75,14 @@ onFormSubmit=()=>{
 }
 
 saveUSerInformations(is_logined,userid,user_name){
-   console.log("user",is_logined,userid,user_name);
+  //console.log("user",is_logined,userid,user_name);
    localStorage.setItem('islogined',is_logined);
    localStorage.setItem('username',user_name);
    localStorage.setItem('userid',userid);
 }
 onEmailChange=(e)=>{
    this.setState({email:e.target.value})
-  if(! this.emeilVlidator(this.state.email)){
+  if(! this.emailValidator(this.state.email)){
      this.setState({emailErrorDisplay:'block',emailErrorMsg:'invalid email'});
   }else{
      this.setState({emailErrorDisplay:'none'});
@@ -99,7 +99,8 @@ onPasswordChange=(e)=>{
    }
 
 }
-emeilVlidator=(email)=>{
+
+emailValidator=(email)=>{
   let regex=/\S+@\S+\.\S+/
     if (regex.test(email))
     {
@@ -118,7 +119,7 @@ render() {
                 <div className="col-sm">
                 
                 </div>
-                <div className="col-sm d-flex justify-content-center pt-5 ">
+                <div className="col-sm d-flex justify-content-center text-center pt-5 ">
                   
                     <div className="login-container mt-5">
                         <div className="login-header">
@@ -128,12 +129,15 @@ render() {
                             <div style={{display:this.state.userNotFoundError}} className="alert alert-danger" role="alert">
                               <b>Sorry we can't find that user.!!</b>
                             </div>
-                                  <input className="input" onChange={this.onEmailChange} type="text" placeholder="email id"></input><br></br>
-                                  <ValidateError msg={this.state.emailErrorMsg} display={this.state.emailErrorDisplay}></ValidateError>
-                                  <br></br>
-                              <input className="input" onChange={this.onPasswordChange} type="password" placeholder="password"></input><br></br>
-                                  <ValidateError msg={this.state.passwordErrorMsg} display={this.state.passwordErrorDisplay}></ValidateError>
-                                 <br></br>
+                            
+                            <div  className="input-with-error d-flex">
+                                <input className="input-inner" onChange={this.onEmailChange} type="text" placeholder="email id"></input>
+                                <img style={{display:this.state.emailErrorDisplay}} src={ErrorImage} alt="error" />
+                            </div>
+                            <div  className="input-with-error d-flex">
+                                <input className="input-inner" onChange={this.onPasswordChange} type="password" placeholder="password"></input>
+                                <img style={{display:this.state.passwordErrorDisplay}} src={ErrorImage} alt="error" />
+                            </div>   
                               <div >
                                 <button className="button-common" onClick={this.onFormSubmit} style={{display:this.state.buttonDisplay}} >Login</button>
                                 <br></br>
@@ -153,6 +157,7 @@ render() {
                             
                         </div>
                      </div> 
+                    
                      
                 </div>
                 <div className="col-sm">

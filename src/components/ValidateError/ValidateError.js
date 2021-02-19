@@ -3,11 +3,7 @@ import './ValidateError.css';
                                                 
                                                 
 class ValidateError extends React.Component { 
-  constructor(props){
-    super(props);
- 
-   
-  }
+  
 render() {                                      
   return (                                      
           <div className="ValidateError" style={{display:this.props.display}}>  

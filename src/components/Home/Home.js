@@ -29,41 +29,44 @@ class Home extends React.Component {
       //   console.log('fetch books');
         let url="https://manage-library-backend.herokuapp.com/books/category-fetch";
         let userId=localStorage.getItem('userid');
+       
         axios.post(url,{
-             libraryId:userId,
-             category:category})
-            .then( (response)=>{
-                let feedback=response.data;
-                 console.log(feedback);
-                 
-                if(category==='autobiography'){
-                   if(feedback.info!=null){
-                      this.setState({autobiographyBookError:'none',autobiographyBooks:feedback.info});
-                   }
-                   
-                }
-                if(category==='fiction'){
-                  if(feedback.info!=null){
-                     this.setState({fictionBookError:'none',fictionbooks:feedback.info});
-                  }
-                  
+         libraryId:userId,
+         category:category})
+        .then( (response)=>{
+            
+            let feedback=response.data;
+            //   console.log(feedback);
+             
+            if(category==='autobiography'){
+               // console.log((feedback.info).length);
+               if((feedback.info).length!==0){
+                  this.setState({autobiographyBookError:'none',autobiographyBooks:feedback.info});
                }
-               if(category==='novel'){
-                  if(feedback.info!=null){
-                    
-                     this.setState({novelBookError:'none',novelbooks:feedback.info});
-                     console.log("novelst",this.state.novelbooks);
-
-                  }
-                  
-               }
-
+               
+            }
+            if(category==='fiction'){
+              if((feedback.info).length !==0){
+                 this.setState({fictionBookError:'none',fictionbooks:feedback.info});
+              }
+              
+           }
+           if(category==='novel'){
+              if((feedback.info).length!==0){
                 
-            })
-            .catch((error)=>{
-                console.log(error);
+                 this.setState({novelBookError:'none',novelbooks:feedback.info});
+               //   console.log("novelst",this.state.novelbooks);
 
-            });
+              }
+              
+           }
+
+            
+        })
+        .catch((error)=>{
+            // console.log("error",error);
+
+        });
    }
    
    

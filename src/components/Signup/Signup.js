@@ -2,8 +2,8 @@ import React from 'react';
 import './Signup.css';                 
 import {withRouter} from "react-router-dom";                                                 
 import ValidationError from '../ValidateError/ValidateError';
-
-
+import axios from 'axios';
+import ErrorImage from '../../images/error.svg'; 
 class Signup extends React.Component { 
   constructor(props){
      super(props);
@@ -26,7 +26,10 @@ class Signup extends React.Component {
             estdErrorShow:'none',
             placeErrorShow:'none',
             pincodeErrorShow:'none',
-           
+            spinnerDisplay:'none',
+            signupButtondisplay:'',
+            accountCreationSuccessDisplay:'none',
+            accountCreationErrorDisplay:'none'
 
             
      }
@@ -38,31 +41,135 @@ navigate=()=>{
 }
 
 onFormInputChange=(e)=>{
-  console.log(e.target.value);
-  this.setState({[e.target.name]:e.target.value})
-  if(this.state.name.length < 3 || this.state.name.length >20){
-     this.setState({nameErrorShow:''});
-  }else{
-   this.setState({nameErrorShow:'none'});
-  }
-  
-  if(!this.emailVlidator(this.state.email)){
-     this.setState({emailErrorShow:''});
-  }else{
-     this.setState({emailErrorShow:'none'});
-  }
- 
-  let today = new Date();
-  let to = today.getDay();
+//   console.log(e.target.value);
+  this.setState({[e.target.name]:e.target.value});
+
+}
+
+createAccount=()=>{
+   let validationError=false;
+   if(this.state.name.length < 3 || this.state.name.length >20){
+      this.setState({nameErrorShow:''});
+      
+      validationError=true;
+   }else{
+    this.setState({nameErrorShow:'none'});
+   }
    
-  var date = new Date('27-02-1997');
-  var day = date.getDate();
+   if(!this.emailValidator(this.state.email)){
+      this.setState({emailErrorShow:''});
+
+      validationError=true;
+     
+   }else{
+      this.setState({emailErrorShow:'none'});
+   }
+   
+   if(this.state.registrationNo.length !== 8 ){
+    this.setState({registrationErrorShow:''});
+
+    validationError=true;
+    
+    }else{
+    this.setState({registrationErrorShow:'none'});
+    }
+
+   //  console.log('date',this.state.EstablishedDate);
+    if(this.state.EstablishedDate ==='' ){
+      this.setState({estdErrorShow:''});
+
+      validationError=true;
+      
+      }else{
+      this.setState({estdErrorShow:'none'});
+      }
   
-console.log('sate',this.state.EstablishedDate,'opt',day);
+      // console.log(this.state.pincode);
+      if(this.state.pincode.length !==6){
+         this.setState({pincodeErrorShow:''});
+
+         validationError=true;
+        
+      }else{
+         this.setState({pincodeErrorShow:'none'});
+      }
+      
+      // console.log('password length',this.state.password.length);
+      if(this.state.password.length < 6){
+         this.setState({passwordErrorShow:''});
+
+         validationError=true;
+        
+      }else{
+         this.setState({passwordErrorShow:'none'});
+      }
+      if(this.state.password !== this.state.confirmPassword || this.state.confirmPassword===''){
+         this.setState({confirmPasswordErrorShow:''});
+
+         validationError=true;
+        
+      }else{
+         this.setState({confirmPasswordErrorShow:'none'});
+      }
+      if(this.state.place ==='' ){
+         this.setState({placeErrorShow:''});
+
+         validationError=true;
+         
+         }else{
+         this.setState({placeErrorShow:'none'});
+         }
+
+      if(!validationError){
+         this.communicateServer()
+      }else{
+         return;
+      }
+         
+
+}
+
+
+communicateServer=()=>{
+    this.setState({accountCreationErrorDisplay:'none',accountCreationErrorDisplay:'none'});
+    this.showSpinner();
+    axios.post("https://manage-library-backend.herokuapp.com/library/register",{
+      name:this.state.name,
+      email:this.state.email,
+      password:this.state.password,
+      registrationNo:this.state.registrationNo,
+      EstablishedDate:this.state.EstablishedDate,
+      place:this.state.place,
+      pincode:this.state.pincode})
+     .then( (response)=>{
+         this.hideSpinner();          
+         let feedback=response.data;
+
+         //  console.log(feedback);
+         if(feedback.status==='error'){
+            this.setState({accountCreationErrorDisplay:''});
+         }
+         if(feedback.status==='success'){
+            this.setState({accountCreationSuccessDisplay:''});
+         }
+         
+         
+     })
+     .catch((error)=>{
+         // console.log(error);
+        this.hideSpinner();
+     });
 
 
 }
-emailVlidator=(email)=>{
+showToolTip=()=>{
+   // console.log('show tool');
+   this.setState({displayToolTip:''})
+}
+hideToolTip=()=>{
+   this.setState({displayToolTip:'none'})
+}
+emailValidator=(email)=>{
    let regex=/\S+@\S+\.\S+/
      if (regex.test(email))
      {
@@ -70,13 +177,13 @@ emailVlidator=(email)=>{
      }
        return (false)
  
- }
-showToolTip=()=>{
-   // console.log('show tool');
-   this.setState({displayToolTip:''})
 }
-hideToolTip=()=>{
-   this.setState({displayToolTip:'none'})
+ 
+showSpinner=()=>{
+  this.setState({spinnerDisplay:'',signupButtondisplay:'none'});
+}
+hideSpinner=()=>{
+   this.setState({spinnerDisplay:'none',signupButtondisplay:''});
 }
 render() {                                      
   return (                                      
@@ -95,40 +202,22 @@ render() {
                         </div>
                        
                         <div className="login-body">
-                        <div class="alert alert-primary" style={{display:this.state.displayToolTip}} role="alert">
+                        <div className="alert alert-primary" style={{display:this.state.displayToolTip}} role="alert">
                            <h5><b>provide established date</b></h5>
                         </div>
                           <div className="container">
                               <div className="row">
                                 <div className="col-sm">
-                                <input className="input" onChange={this.onFormInputChange} name="name" type="text" placeholder="libary name "></input>
-                                <br></br>
-                                <ValidationError display={this.state.nameErrorShow} msg="invalid name "></ValidationError>
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="name" type="text" placeholder="libary name "></input>
+                                       <img style={{display:this.state.nameErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>
                                 </div>
                                 <div className="col-sm">
-                                <input className="input" onChange={this.onFormInputChange} name="email" type="text" placeholder="email id "></input>
-                                <br></br>
-                                 <ValidationError display={this.state.emailErrorShow} msg="email required"></ValidationError>
-                                </div>
-                                
-                              </div>
-                           </div>
-                           <div className="container">
-                              <div className="row">
-                                <div className="col-sm">
-                                   <input className="input" onChange={this.onFormInputChange} name="registrationNo "type="text" placeholder="registration number "></input><br></br>
-                                   <ValidationError display='' msg="reg no required"></ValidationError>
-                                   <br></br>
-                                   
-                                
-                                </div>
-                                <div className="col-sm">
-                                   
-                                   
-                                   <input className="input" onChange={this.onFormInputChange} name="EstablishedDate" type="date"  onFocus={this.showToolTip} onBlur={this.hideToolTip}></input>
-                                   
-                                   <br></br>
-                                   <ValidationError display='' msg="required"></ValidationError>
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="email" type="text" placeholder="email id "></input>
+                                       <img style={{display:this.state.emailErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>
                                 </div>
                                 
                               </div>
@@ -136,26 +225,68 @@ render() {
                            <div className="container">
                               <div className="row">
                                 <div className="col-sm">
-                                <input className="input" onChange={this.onFormInputChange} name="place" type="text" placeholder="place"></input>
-                                <br></br>
-                                <ValidationError display='' msg="required"></ValidationError>
-                                
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="password" type="password" placeholder="password"></input>
+                                       <img style={{display:this.state.passwordErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>
                                 </div>
                                 <div className="col-sm">
-                                <input className="input" onChange={this.onFormInputChange} name="pincode" type="number" placeholder="pincode"></input>
-                                <br></br>
-                                <ValidationError display='' msg="required"></ValidationError>
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="confirmPassword" type="password" placeholder="confirm password"></input>
+                                       <img style={{display:this.state.confirmPasswordErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>
+                                </div>
+                                
+                              </div>
+                           </div>
+                           <div className="container">
+                              <div className="row">
+                                <div className="col-sm">
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="registrationNo" type="text" placeholder="registration number "></input>
+                                       <img style={{display:this.state.registrationErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>
+                                </div>
+                                <div className="col-sm">
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="EstablishedDate" type="date"  onFocus={this.showToolTip} onBlur={this.hideToolTip}></input>
+                                       <img style={{display:this.state.estdErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>
+                                </div>
+                                
+                              </div>
+                           </div>
+                           <div className="container">
+                              <div className="row">
+                                <div className="col-sm">
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="place" type="text" placeholder="place"></input>
+                                       <img style={{display:this.state.placeErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>     
+                                </div>
+                                <div className="col-sm">
+                                    <div  className="input-with-error d-flex">
+                                       <input className="input-inner" onChange={this.onFormInputChange} name="pincode" type="number" placeholder="pincode"></input>
+                                       <img style={{display:this.state.pincodeErrorShow}} src={ErrorImage} alt="error" />
+                                    </div>  
                                 </div>
                                 
                               </div>
                            </div>    
                               
-                              
-                              
-                              
-                              
-                              
-                              <button className="button-common">Login</button>
+
+                              <button className="button-common" style={{display:this.state.signupButtondisplay}} onClick={this.createAccount}>Login</button>
+                              <div style={{display:this.state.spinnerDisplay}}>
+                                  <div className="spinner-border  spinner"  role="status" > </div>
+                              </div>
+                              <br></br>
+                              <br></br>
+                              <div className="alert alert-success" role="alert" style={{display:this.state.accountCreationSuccessDisplay}}>
+                                Account created successfully <b onClick={this.navigate} className="signup-bold">Click here</b> to login .
+                              </div>
+                              <div className="alert alert-warning" role="alert" style={{display:this.state.accountCreationErrorDisplay}}>
+                                 Something went wrong try again .!!
+                              </div>
                         </div>
                         <div className="login-footer">
                             <p className="account-creation">Have an account ?</p>
@@ -165,7 +296,6 @@ render() {
                      
                 </div>
                 <div className="col-sm-1">
-                  
                 </div>
               </div>
             </div>   

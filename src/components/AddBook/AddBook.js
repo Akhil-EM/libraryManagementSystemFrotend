@@ -1,7 +1,7 @@
 import React from 'react';                      
 import './AddBook.css';                 
-                                                
-
+import ErrorImage from '../../images/error.svg';                                              
+import axios from 'axios';
 
 class AddBook extends React.Component { 
  
@@ -10,27 +10,170 @@ class AddBook extends React.Component {
 
     this.state={
       buttonDisplay:'inline',
-      spinnerDisplay:'none'
+      spinnerDisplay:'none',
+      libraryId:'',
+      name:'',
+      author:'',
+      publisher:'',
+      genre:'',
+      noOfPages:'',
+      price:'',
+      nameErrorDisplay:'none',
+      authorErrorDisplay:'none',
+      publisherErrorDisplay:'none',
+      genreErrorDisplay:'none',
+      noOfPagesErrorDisplay:'none',
+      priceErrorDisplay:'none',
+      bookCreationErrorDisplay:'none',
+      bookCreationSuccessDisplay:'none'
+
       
     }
   }
 
-updateButton=()=>{
-  this.setState({spinnerDisplay:"",buttonDisplay:'none'});
+onInputItemChange=(e)=>{
+  // console.log(e.target.value);
+  this.setState({[e.target.name]:e.target.value});
 }
-oldButton=()=>{
-  this.setState({buttonFontSize:"18px",
-  buttonWidth:"40%",
-  buttonBorder:"2px solid rgb(0, 0, 0)",
-  buttonDisplay:'flex'});
- 
+showSpinner=()=>{
+  this.setState({spinnerDisplay:'',buttonDisplay:'none'});
 }
-submitForm=()=>{
+hideSpinner=()=>{
+  this.setState({spinnerDisplay:'none',buttonDisplay:''});
+}
+submitForm=()=>{ 
+    let error=false;
+    // console.log('name',this.state.genre);
+    this.setState({bookCreationErrorDisplay:'none',bookCreationSuccessDisplay:'none'});
+    if(this.state.name===''){
+       error=true;
+       this.setState({nameErrorDisplay:''});
+    }else{
+       this.setState({nameErrorDisplay:'none'});
+    }
+
+    if(this.state.author===''){
+      error=true;
+      this.setState({authorErrorDisplay:''});
+    }else{
+        this.setState({authorErrorDisplay:'none'});
+    }
+
+    if(this.state.publisher===''){
+      error=true;
+      this.setState({publisherErrorDisplay:''});
+    }else{
+        this.setState({publisherErrorDisplay:'none'});
+    }
+
+    if(this.state.genre===''){
+      error=true;
+      this.setState({genreErrorDisplay:''});
+    }else{
+        this.setState({genreErrorDisplay:'none'});
+    }
     
-    //  this.updateButton();
+    if(this.state.noOfPages===''){
+      error=true;
+      this.setState({noOfPagesErrorDisplay:''});
+    }else{
+        this.setState({noOfPagesErrorDisplay:'none'});
+    }
     
+
+    if(this.state.price===''){
+      error=true;
+      this.setState({priceErrorDisplay:''});
+    }else{
+        this.setState({priceErrorDisplay:'none'});
+    }
+
+    if(!error){
+      this.communicateServer();
+    }
+}
+validateOnFocusOut=(e)=>{
      
+      let inputName=e.target.name;
+      
+
+      switch (inputName) {
+        case 'name':
+                      if(this.state.name===''){
+                             this.setState({nameErrorDisplay:''});
+                        }else{ this.setState({nameErrorDisplay:'none'}); }
+            break;
+        case 'author':
+                    if(this.state.author===''){
+                          this.setState({authorErrorDisplay:''});
+                      }else{ this.setState({authorErrorDisplay:'none'}); }
+            break; 
+            case 'publisher':
+                    if(this.state.publisher===''){
+                          this.setState({publisherErrorDisplay:''});
+                      }else{ this.setState({publisherErrorDisplay:'none'}); }
+               break;
+            case 'genre':
+                        if(this.state.genre===''){
+                              this.setState({genreErrorDisplay:''});
+                          }else{ this.setState({genreErrorDisplay:'none'}); }
+                break; 
+            case 'noOfPages':
+                  if(this.state.noOfPages===''){
+                        this.setState({noOfPagesErrorDisplay:''});
+                    }else{ this.setState({noOfPagesErrorDisplay:'none'}); }
+            break;
+          case 'price':
+                      if(this.state.price===''){
+                            this.setState({priceErrorDisplay:''});
+                        }else{ this.setState({priceErrorDisplay:'none'}); }
+              break; 
+      
+         default:
+          break;
+      }
+        
+
+    
+      
+
      
+}
+communicateServer=()=>{
+   this.showSpinner();
+   let library_id=localStorage.getItem('userid');
+   axios.post("https://manage-library-backend.herokuapp.com/books/add",{
+    libraryId:library_id,
+    name:this.state.name,
+    author:this.state.author,
+    publisher:this.state.publisher,
+    genre:this.state.genre,
+    noOfPages:this.state.noOfPages,
+    price:this.state.price})
+   .then( (response)=>{
+       this.hideSpinner();          
+       let feedback=response.data;
+
+        //console.log(feedback);
+       if(feedback.status=='error'){
+          this.setState({bookCreationErrorDisplay:''});
+              setTimeout(function(){ 
+                window.location.reload();
+          }, 500);
+       }
+       if(feedback.status=='success'){
+          this.setState({bookCreationSuccessDisplay:''});
+          setTimeout(function(){ 
+            window.location.reload();
+          }, 500);
+       }
+       
+       
+   })
+   .catch((error)=>{
+        //console.log(error);
+      this.hideSpinner();
+   });
 }
 render() {                                      
   return (                                      
@@ -49,38 +192,28 @@ render() {
                         </div>
                        
                         <div className="login-body">
+                        <div className="alert alert-danger" role="alert"  style={{display:this.state.bookCreationErrorDisplay}}>
+                            <b>Something went wrong try again .!!</b>
+                        </div>
+                        <div className="alert alert-success" role="alert" style={{display:this.state.bookCreationSuccessDisplay}}>
+                          <b>Book added successfully..!!</b>
+                        </div>
                           <div className="container">
                               <div className="row">
                                 <div className="col-sm">
-                                <input className="input" type="text" placeholder="book name "></input>
+                                <div   className="input-with-error">
+                                   <input onChange={this.onInputItemChange}    onBlur={this.validateOnFocusOut}  className="input-inner" name="name"  type="text" placeholder="book name "></input>
+                                   <img style={{display:this.state.nameErrorDisplay}} src={ErrorImage} alt="error" />
+                                </div>
+                               
                                 
                                 </div>
                                 <div className="col-sm">
-                                <input className="input" type="text" placeholder="author"></input>
-                                </div>
-                                
-                              </div>
-                           </div>
-                           <div className="container">
-                              <div className="row">
-                                <div className="col-sm">
-                                <select className="input" name="cars" id="cars" >
-                                {/* TALES,Novel,Philosophy,Poems,Science,Spiritual,Sports,Translation,Travelogue,Yoga, */}
-                                  <option value="Choose genre">Choose genre</option>
-                                  <option value="Autobiography">Autobiography</option>
-                                  <option value="Agriculture">Agriculture</option>
-                                  <option value="Biography">Biography</option>
-                                  <option value="Novel">Novel</option>
-                                  <option value="Philosophy">Philosophy</option>
-                                  <option value="Poems">Poems</option>
-                                  <option value="Short Story">Short Story</option>
-                                  <option value="Travelogue">Travelogue</option>
-                                  <option value="Others">Others</option>
-                                </select>
-                                
-                                </div>
-                                <div className="col-sm">
-                                        <input className="input" type="text" placeholder="publisher"></input>
+                                    <div  className="input-with-error">
+                                      <input  onChange={this.onInputItemChange}    onBlur={this.validateOnFocusOut} name="author" className="input-inner" type="text" placeholder="author"></input>
+                                      <img style={{display:this.state.authorErrorDisplay}} src={ErrorImage} alt="error" />
+                                    </div>
+                                    
                                 </div>
                                 
                               </div>
@@ -88,11 +221,50 @@ render() {
                            <div className="container">
                               <div className="row">
                                 <div className="col-sm">
-                                <input className="input" type="int" placeholder="no of pages"></input>
+                                  <div  className="input-with-error">
+                                      <select onChange={this.onInputItemChange}    onBlur={this.validateOnFocusOut} className="input-inner" name="genre" >
+                                    {/* TALES,Novel,Philosophy,Poems,Science,Spiritual,Sports,Translation,Travelogue,Yoga, */}
+                                      <option value="Choose genre">Choose genre</option>
+                                      <option value="autobiography">Autobiography</option>
+                                      <option value="agriculture">Agriculture</option>
+                                      <option value="biography">Biography</option>
+                                      <option value="novel">Novel</option>
+                                      <option value="philosophy">Philosophy</option>
+                                      <option value="poems">Poems</option>
+                                      <option value="short-story">Short Story</option>
+                                      <option value="travelogue">Travelogue</option>
+                                      <option value="others">Others</option>
+                                    </select>     
+                                       <img style={{display:this.state.genreErrorDisplay}} src={ErrorImage} alt="error" />
+                                  </div>
+                               
                                 
                                 </div>
                                 <div className="col-sm">
-                                <input className="input" type="number" placeholder="price"></input>
+                                     <div  className="input-with-error">
+                                            <input onChange={this.onInputItemChange}    onBlur={this.validateOnFocusOut} name="publisher" className="input-inner" type="text" placeholder="publisher"></input>
+                                            <img style={{display:this.state.publisherErrorDisplay}} src={ErrorImage} alt="error" />
+                                      </div>
+                                        
+                                </div>
+                                
+                              </div>
+                           </div>
+                           <div className="container">
+                              <div className="row">
+                                <div className="col-sm">
+                                
+                                  <div  className="input-with-error">
+                                        <input onChange={this.onInputItemChange}    onBlur={this.validateOnFocusOut} name="noOfPages" className="input-inner" type="number" placeholder="no of pages"></input>
+                                        <img style={{display:this.state.noOfPagesErrorDisplay}} src={ErrorImage} alt="error" />
+                                  </div>
+                                </div>
+                                <div className="col-sm">
+                                  <div  className="input-with-error">
+                                        <input onChange={this.onInputItemChange}    onBlur={this.validateOnFocusOut} name="price" className="input-inner" type="number" placeholder="price"></input>
+                                        <img style={{display:this.state.priceErrorDisplay}} src={ErrorImage} alt="error" />
+                                  </div>
+                                  
                                 </div>
                                 
                               </div>
@@ -100,7 +272,7 @@ render() {
       
                               <button className="button-common" style={{display:this.state.buttonDisplay}} onClick={this.submitForm}>Add</button><br></br>
                               <div className="spinner-border  spinner" style={{display:this.state.spinnerDisplay}} role="status">
-                                {/* <span className="sr-only">Loading...</span> */}
+                               
                               </div>
                         </div>
                         

@@ -13,13 +13,14 @@ import SearchBook from "../SearchBook/SearchBook";
 import NewMembership from "../NewMembership/NewMembership";
 import ListMembers from "../ListMembers/ListMembers";
 import ErrorPage from "../ErrorPage/ErrorPage";
-
+import AdminLogin from '../AdminLogin/AdminLogin';
+import AdminHome from "../AdminHome/AdminHome";
 
 import {BrowserRouter,
   Switch,
   Route,
   } from "react-router-dom";
-  import {Animated} from "react-animated-css";
+  // import {Animated} from "react-animated-css";
 
 class Router extends React.Component {
    
@@ -78,6 +79,12 @@ render() {
                        </Route>
                        <Route path="/list-members">
                            <ListMembers></ListMembers>
+                       </Route>
+                       <Route path="/admin-login">
+                           <AdminLogin></AdminLogin>
+                       </Route>
+                       <Route path="/admin-home">
+                           <AdminHome></AdminHome>
                        </Route>
                        <Route >
                            <ErrorPage></ErrorPage>

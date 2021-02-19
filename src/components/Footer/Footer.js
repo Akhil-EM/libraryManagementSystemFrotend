@@ -6,15 +6,16 @@ class Footer extends React.Component {
 render() { 
   let fullUrl=window.location.href;
   if(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0){
-    console.log('yes');
+    // console.log('yes');
      return(<div></div>);
+   }else{
+          return (                                      
+            <div className="Footer bg-dark text-light text-center p-3" > 
+              
+              <p className="mt-5">© Copyright @2020 Library Manager .</p>
+            </div>)
    }                                     
-  return (                                      
-          <div className="Footer bg-dark text-light text-center p-3" > 
-             
-             <p className="mt-5">© Copyright @2020 Library Manager .</p>
-          </div>                              
-    );                                          
+ ;                                          
  }                                              
  }                                              
                                                 

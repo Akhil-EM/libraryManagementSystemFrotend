@@ -84,3 +84,6 @@
   .book-name{
       text-transform: uppercase;
   }
+  .card-body li{
+     font-size:20px;
+  }

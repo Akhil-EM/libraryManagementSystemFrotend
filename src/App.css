@@ -12,9 +12,9 @@
     background-color:rgb(255, 255, 255);
     border-radius:15px;
     width:350px;
-    position: absolute;
+    position:fixed; 
     left: 50%;
-    top:35%;
+    top:30%;
     -webkit-transform: translate(-50%, -36%);
     transform: translate(-50%, -36%);
     -webkit-box-shadow: 10px 10px 42px -1px rgba(0,0,0,0.53);
@@ -23,16 +23,17 @@
     text-align: center;
     padding:10px;
     z-index:999;
+    height:min-content;
 }
 
 .login-container{
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
-    
     background-color:rgb(255, 255, 255);
     border-radius:15px;
     width:auto;
     margin:15px;
+    
   }
   .login-container:hover{
       box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -87,7 +88,32 @@
       background-color: #fff;
       border: 2px solid rgb(0, 0, 0);
   }
-  
+  .input-inner{
+    width:85%;
+    border:none;
+    margin-right:5px;
+    background-color:transparent;
+    font-size:20px;
+    font-weight: 800;
+  }
+  .input-with-error{
+    width:90%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius:28px;
+    background-color: rgb(233, 233, 233);
+    
+    width:300px;
+  }
+  .input-with-error:hover{
+    background-color: #fff;
+    border: 2px solid rgb(0, 0, 0);
+  }
+  .input-with-error:focus{
+    background-color: #fff;
+    border: 2px solid rgb(0, 0, 0);  
+  }
   .button-common{
     background-color: #ffffff; /* Green */
     border:2px solid rgb(0, 0, 0);
@@ -119,6 +145,35 @@
      color:rgb(0, 0, 0);
      font-weight: bold;
      font-size:35px;
-     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    
   }
   
+  .cursor-pointer{
+    cursor: pointer;
+  }
+
+  .issue-book-dialouge{
+    height:30vh;
+    width: min-content;
+    /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); */
+    transition: 0.3s;    
+    background-color:rgb(255, 255, 255);
+    border-radius:15px;
+    position:fixed; 
+    left: 50%;
+    top:30%;
+    -webkit-transform: translate(-50%, -36%);
+    transform: translate(-50%, -36%);
+    -webkit-box-shadow: 10px 10px 42px -1px rgba(0,0,0,0.53);
+    -moz-box-shadow: 10px 10px 42px -1px rgba(0,0,0,0.53);
+    box-shadow: 10px 10px 42px -1px rgba(0,0,0,0.53);
+    text-align: center;
+    
+    z-index:999;
+    height:min-content;
+  }
+  .close-custom{
+    font-weight: bold;
+    font-size:40px;
+    color:#fff;
+  }

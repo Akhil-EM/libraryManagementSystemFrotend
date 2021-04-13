@@ -1,7 +1,6 @@
 import React from 'react';                      
-import './ListMembers.css';                 
-import axios from 'axios';                                              
-                                                
+import './ListMembers.css';                                                             
+import MembersService from '../../service/members.service'                                               
 class ListMembers extends React.Component { 
 
   constructor(){
@@ -17,30 +16,29 @@ class ListMembers extends React.Component {
      this.preloadata();
   }
   preloadata=()=>{
-    let library_id=localStorage.getItem('userid');
-      axios.post("https://manage-library-backend.herokuapp.com/members/fetch-all",{
-      libraryId:library_id,
-      })
-      .then( (response)=>{
-          
-          let feedback=response.data;
-          // console.log(feedback.info);
-          this.setState({memberslist:feedback.info,preloaderDisplay:'none'});
+    let  library_id=localStorage.getItem('userid');
+    let member_fetch_credantials={libraryId:library_id}
 
-          if(this.state.memberslist.length==0){
-            this.setState({memberNotFoundErrorDisplay:''})
-          }
-          
-      })
-      .catch((error)=>{
-         this.setState({preloaderDisplay:'none'})
-          //console.log(error);
-      });
+    MembersService.fetchAllMembers(member_fetch_credantials)
+            .then(response => {
+              let feedback=response.data;
+              // console.log(feedback.info);
+              this.setState({memberslist:feedback.info,preloaderDisplay:'none'});
+    
+              if(this.state.memberslist.length===0){
+                this.setState({memberNotFoundErrorDisplay:''})
+              }
+            })
+            .catch(e => {
+                // console.error(e);
+                this.setState({preloaderDisplay:'none'})
+            });
+     
   }
 render() {  
                                 
   return (                                      
-          <div class="ListMembers" >   
+          <div className="ListMembers" >   
              <h3 className="m-5 text-center">Members</h3>  
              <div className="p-3">
                <div className="text-center">
@@ -49,8 +47,8 @@ render() {
                       No members found..!!
                     </div>
                </div>
-                <div class="table-responsive" style={{display:this.state.preloaderDisplay===''?'none':''}}>
-                  <table class="table table-hover">
+                <div className="table-responsive" style={{display:this.state.preloaderDisplay===''?'none':''}}>
+                  <table className="table table-hover">
                     <thead>
                       <tr>
                         <th scope="col">No</th>

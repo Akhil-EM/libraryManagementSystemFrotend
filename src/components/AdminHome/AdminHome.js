@@ -30,7 +30,7 @@ class AdminHome extends React.Component {
          
           console.log(feedback);
           
-          if((feedback.info).length==0){
+          if((feedback.info).length===0){
             this.setState({libarysNotFoundShow:''});
           }
           if((feedback.info).length>0){

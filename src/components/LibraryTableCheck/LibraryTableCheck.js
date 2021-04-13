@@ -49,10 +49,10 @@ class LibraryTableCheck extends React.Component {
             
               // console.log(feedback);
               
-              if(feedback.status=='success'){
+              if(feedback.status==='success'){
                 this.setState({successMessage:''});
               }
-              if(feedback.status=='error'){
+              if(feedback.status==='error'){
                 this.setState({errorMessage:''});
               }
 

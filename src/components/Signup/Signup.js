@@ -1,9 +1,9 @@
 import React from 'react';                      
 import './Signup.css';                 
 import {withRouter} from "react-router-dom";                                                 
-import ValidationError from '../ValidateError/ValidateError';
-import axios from 'axios';
 import ErrorImage from '../../images/error.svg'; 
+
+import HandleLibrary from '../../service/library.service'
 class Signup extends React.Component { 
   constructor(props){
      super(props);
@@ -131,9 +131,10 @@ createAccount=()=>{
 
 
 communicateServer=()=>{
-    this.setState({accountCreationErrorDisplay:'none',accountCreationErrorDisplay:'none'});
+    this.setState({accountCreationErrorDisplay:'none'});
     this.showSpinner();
-    axios.post("https://manage-library-backend.herokuapp.com/library/register",{
+
+    HandleLibrary.createLibrary({
       name:this.state.name,
       email:this.state.email,
       password:this.state.password,

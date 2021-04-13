@@ -1,12 +1,10 @@
 import React from 'react';                      
 import './Home.css';                 
- 
-import axios from "axios";
-import { withRouter} from "react-router-dom";                                                 
+import {withRouter} from "react-router-dom";                                                
+import bookService from '../../service/book.service';
 class Home extends React.Component { 
    constructor(){
       super();
-      
       this.state={
           autobiographyBookError:'grid',
           fictionBookError:'grid',
@@ -25,48 +23,45 @@ class Home extends React.Component {
       this.fetchBooks('fiction');
       this.fetchBooks('novel')
    }
-   fetchBooks=(category)=>{
-      //   console.log('fetch books');
-        let url="https://manage-library-backend.herokuapp.com/books/category-fetch";
-        let userId=localStorage.getItem('userid');
-       
-        axios.post(url,{
-         libraryId:userId,
-         category:category})
-        .then( (response)=>{
+   fetchBooks=(_category)=>{
+        let library_id=localStorage.getItem('userid');
+        var book_search_credentials={
+               category:_category,
+               libraryId:library_id}
             
-            let feedback=response.data;
-            //   console.log(feedback);
-             
-            if(category==='autobiography'){
-               // console.log((feedback.info).length);
+         //  console.log(book_search_credentials)
+         bookService.fetchByCatogory(book_search_credentials)
+            .then(response => {
+              this.setState({buttonDisplay:'inline',spinnerDisplay:'none'});
+              let feedback=response.data;
+                
+            //  console.log(feedback);
+              if(_category==='autobiography'){
+               // console.log(feedback.info);
                if((feedback.info).length!==0){
                   this.setState({autobiographyBookError:'none',autobiographyBooks:feedback.info});
                }
                
-            }
-            if(category==='fiction'){
-              if((feedback.info).length !==0){
-                 this.setState({fictionBookError:'none',fictionbooks:feedback.info});
-              }
-              
-           }
-           if(category==='novel'){
-              if((feedback.info).length!==0){
-                
-                 this.setState({novelBookError:'none',novelbooks:feedback.info});
-               //   console.log("novelst",this.state.novelbooks);
-
-              }
-              
-           }
-
-            
-        })
-        .catch((error)=>{
-            // console.log("error",error);
-
-        });
+                  }
+                  if(_category==='fiction'){
+                  if((feedback.info).length !==0){
+                     this.setState({fictionBookError:'none',fictionbooks:feedback.info});
+                  }
+                  
+               }
+               if(_category==='novel'){
+                  if((feedback.info).length!==0){
+                     
+                     this.setState({novelBookError:'none',novelbooks:feedback.info});
+                  }
+                  
+               }
+            })
+            .catch(e => {
+                // console.error(e);
+                this.setState({buttonDisplay:'inline',spinnerDisplay:'none'});
+            });
+        
    }
    
    
@@ -75,13 +70,11 @@ render() {
      
                                      
   return (                                     
-          <div className="Home" >
-                
+          <div className="Home" >               
               <h3 className="books-avavilable">Books Available</h3>  
               <hr></hr>
               <div className="book-section">
                 <h3 className="m-3">Autobiography</h3> 
-      
                   <div style={{display:this.state.autobiographyBookError}} className="alert alert-warning m-5" role="alert" >
                      <h4 className="text-center m-5"><b>No books avilable in this category..!!</b></h4>
                   </div>

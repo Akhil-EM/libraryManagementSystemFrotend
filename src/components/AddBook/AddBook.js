@@ -1,8 +1,7 @@
 import React from 'react';                      
 import './AddBook.css';                 
 import ErrorImage from '../../images/error.svg';                                              
-import axios from 'axios';
-
+import HandleBook from '../../service/book.service'
 class AddBook extends React.Component { 
  
   constructor(){
@@ -142,38 +141,36 @@ validateOnFocusOut=(e)=>{
 communicateServer=()=>{
    this.showSpinner();
    let library_id=localStorage.getItem('userid');
-   axios.post("https://manage-library-backend.herokuapp.com/books/add",{
+   var book_info={
     libraryId:library_id,
     name:this.state.name,
     author:this.state.author,
     publisher:this.state.publisher,
     genre:this.state.genre,
     noOfPages:this.state.noOfPages,
-    price:this.state.price})
-   .then( (response)=>{
-       this.hideSpinner();          
-       let feedback=response.data;
-
-        //console.log(feedback);
-       if(feedback.status=='error'){
-          this.setState({bookCreationErrorDisplay:''});
-              setTimeout(function(){ 
-                window.location.reload();
-          }, 500);
-       }
-       if(feedback.status=='success'){
-          this.setState({bookCreationSuccessDisplay:''});
-          setTimeout(function(){ 
-            window.location.reload();
-          }, 500);
-       }
-       
-       
-   })
-   .catch((error)=>{
-        //console.log(error);
-      this.hideSpinner();
-   });
+    price:this.state.price}
+   HandleBook.addBook(book_info)
+            .then(response => {
+                this.hideSpinner();          
+                let feedback=response.data;
+                  //console.log(feedback);
+                  if(feedback.status==='error'){
+                    this.setState({bookCreationErrorDisplay:''});
+                        setTimeout(function(){ 
+                          window.location.reload();
+                    }, 500);
+                }
+                if(feedback.status==='success'){
+                    this.setState({bookCreationSuccessDisplay:''});
+                    setTimeout(function(){ 
+                      window.location.reload();
+                    }, 500);
+                }
+            })
+            .catch(e => {
+              this.hideSpinner();
+            });
+  
 }
 render() {                                      
   return (                                      

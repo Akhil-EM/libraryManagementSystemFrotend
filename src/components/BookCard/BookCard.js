@@ -2,6 +2,8 @@ import React from 'react';
 import './BookCard.css';                 
 import axios from 'axios';                                                
 import ErrorImage from '../../images/error.svg';  
+import HandleBook from '../../service/book.service'
+import membersService from '../../service/members.service';
 
 class BookCard extends React.Component { 
 
@@ -43,9 +45,8 @@ class BookCard extends React.Component {
   }
   loadPreData=()=>{
       let library_id=localStorage.getItem('userid');
-      axios.post("https://manage-library-backend.herokuapp.com/members/fetch-all",{
-      libraryId:library_id,
-      })
+      
+      membersService.fetchAllMembers({libraryId:library_id})
       .then( (response)=>{
 
           let feedback=response.data;
@@ -93,21 +94,21 @@ class BookCard extends React.Component {
       
       this.setState({deleteDialogueItemsDisplay:'none',deleteSpinnerDisplay:''});
       let library_id=localStorage.getItem('userid');
-      axios.post("https://manage-library-backend.herokuapp.com/books/delete",{
+    
+      HandleBook.deleteBook({
         libraryId:library_id,
-        bookId:bookId
-      })
+        bookId:bookId})
       .then( (response)=>{
           this.setState({deleteSpinnerDisplay:'none'});
           let feedback=response.data;
           //console.log(feedback);
-          if(feedback.status=='success'){
+          if(feedback.status==='success'){
              this.setState({bookDeletionSuccessDisplay:''});
              setTimeout(function(){ 
               window.location.reload();
               }, 500);
           }
-          if(feedback.status=='error'){
+          if(feedback.status==='error'){
             this.setState({bookDeletionErrorDisplay:''});
             setTimeout(function(){ 
               window.location.reload();
@@ -156,20 +157,16 @@ class BookCard extends React.Component {
   communicateServer=()=>{
       this.setState({issuebookDialogueItemsDisplay:'none',issuBookDialogueSpinnerDisplay:'',});
       let library_id=localStorage.getItem('userid');
-//      
-
-      //  console.log(library_id,"fhjkfj",this.state.memberId,this.state.bookId);
-      // https://manage-library-backend.herokuapp.com/books/issue
-      axios.post("https://manage-library-backend.herokuapp.com/books/issue",{
+    
+      HandleBook.issueBook({
         libraryId:library_id,
         memberId:this.state.memberId,
         bookId:this.state.bookId
-      })
-      .then( (response)=>{
-        this.setState({issuebookDialogueItemsDisplay:'',issuBookDialogueSpinnerDisplay:'none',issuebookDialogueItemsDisplay:'none'});
+      }).then( (response)=>{
+        this.setState({issuBookDialogueSpinnerDisplay:'none',issuebookDialogueItemsDisplay:'none'});
           let feedback=response.data;
           //  console.log(feedback);
-          if(feedback.status=='success'){
+          if(feedback.status==='success'){
             this.setState({issueBookSuccessDisplay:'',issuebookDialogueItemsDisplay:'none'});
               setTimeout(function(){ 
                    window.location.reload();
@@ -177,10 +174,10 @@ class BookCard extends React.Component {
              
               
           }
-          if(feedback.status=='error' && feedback.message==''){
+          if(feedback.status==='error' && feedback.message===''){
             this.setState({issueBookErrorDisplay:''});
           }
-          if(feedback.status=='error' && feedback.message=='limit reached'){
+          if(feedback.status==='error' && feedback.message==='limit reached'){
             this.setState({issueBookLimitReachedErrorDisplay:''});
                 setTimeout(function(){ 
                   window.location.reload();
@@ -205,23 +202,19 @@ class BookCard extends React.Component {
                       memberId:this.state.book_renters_id,
                       bookId:this.state.bookId,
                       bookIssueId:this.state.book_issue_id}
-
-        // console.log('book return object',returnObj); 
-           
-        // https://manage-library-backend.herokuapp.com/books/return          
-       axios.post("https://manage-library-backend.herokuapp.com/books/return",returnObj)
+       HandleBook.returnBook(returnObj)
        .then( (response)=>{
            this.setState({returnBookDialogueButtonDisplay:'none',returnBookDialogueSpinnerDisplay:'none'});   
            let feedback=response.data;
            this.setState({resultsDisplay:''});
             // console.log(feedback);
-           if(feedback.status=='error'){
+           if(feedback.status==='error'){
               this.setState({returnBookErrorDisplay:''});
               setTimeout(function(){ 
                 window.location.reload();
                  }, 500);
            }
-           if(feedback.status=='success'){
+           if(feedback.status==='success'){
                this.setState({returnBookSuccessDisplay:''});
                setTimeout(function(){ 
                 window.location.reload();
@@ -258,16 +251,16 @@ render() {
                                         
                                     </ul>
                                     <br></br>
-                                    <div className="alert alert-danger text-center m-3"  role="alert" style={{display:this.props.bookAvailable==false ?'':'none',}}>
+                                    <div className="alert alert-danger text-center m-3"  role="alert" style={{display:this.props.bookAvailable===false ?'':'none',}}>
                                           <b>Sorry this book is not available</b>
                                     </div>
                                     <br></br>
                                     <div className="d-flex justify-content-between " >  
-                                             <button type="button" style={{display:this.props.bookAvailable==false ?'none':'',}}  className="btn btn-info ml-5" onClick={()=>this.issueBookButtonClick(this.props.name,this.props.bookId)}>Issue book</button>
-                                             <button type="button" style={{display:this.props.bookAvailable==false ?'none':'',}} className="btn btn-danger mr-5"  onClick={()=>this.clickHandler('delete-dialogue')}>Delete book</button> 
+                                             <button type="button" style={{display:this.props.bookAvailable===false ?'none':'',}}  className="btn btn-info ml-5" onClick={()=>this.issueBookButtonClick(this.props.name,this.props.bookId)}>Issue book</button>
+                                             <button type="button" style={{display:this.props.bookAvailable===false ?'none':'',}} className="btn btn-danger mr-5"  onClick={()=>this.clickHandler('delete-dialogue')}>Delete book</button> 
                                     </div>
                                     <div className="text-center">
-                                       <button type="button" style={{display:this.props.bookAvailable==false ?'':'none',}} className="btn btn-primary mr-5"  onClick={this.showBookReturnDialogue}>Return Book</button>
+                                       <button type="button" style={{display:this.props.bookAvailable===false ?'':'none',}} className="btn btn-primary mr-5"  onClick={this.showBookReturnDialogue}>Return Book</button>
                                     </div>
                                   </div>
                                 </div> 

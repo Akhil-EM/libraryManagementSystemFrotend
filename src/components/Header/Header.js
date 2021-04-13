@@ -1,7 +1,7 @@
 import React from 'react';                      
 import './Header.css';                 
-import {withRouter,useHistory} from "react-router-dom";
-                                             
+import {withRouter} from "react-router-dom";
+import HandleBook from "../../service/book.service"                                       
 import axios from 'axios'; 
 
 
@@ -14,7 +14,6 @@ class Header extends React.Component {
     this.state={
       searchDisplay:"none",
       logoutMessageDisplay:'none',
-      searchBy:'name',
       searchKey:'',
       bookResultArray:[],
       searchSpinnerDisplay:'none',
@@ -82,21 +81,23 @@ class Header extends React.Component {
   this.showSerachSpinner();
   this.setState({searchBookNotFoundErrorDisplay:'none',somethingWentWrongErrorDisplay:'none',searchScrollerDisplay:'none'})
   let library_id=localStorage.getItem('userid');
-  axios.post("https://manage-library-backend.herokuapp.com/books/search",{
+  let search_book_by_name_credentials={
    libraryId:library_id,
-   searchBy:this.state.searchBy,
+   searchBy:"name",
    searchKey:this.state.searchKey
-   })
+  }
+
+  HandleBook.searchBookByAnything(search_book_by_name_credentials)
   .then( (response)=>{
       this.hideSerachSpinner();
       let feedback=response.data;
        this.setState({searchDisplay:'inline'});
       //  console.log(feedback);
        
-      if(feedback.status=='error'){
+      if(feedback.status==='error'){
           this.setState({somethingWentWrongErrorDisplay:''});
       }
-      if(feedback.status=='success'){
+      if(feedback.status==='success'){
            if((feedback.books).length===0){
              this.setState({searchBookNotFoundErrorDisplay:''});
            }else{

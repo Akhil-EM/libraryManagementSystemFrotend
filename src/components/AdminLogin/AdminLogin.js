@@ -1,6 +1,5 @@
 import React from 'react';                      
-import './AdminLogin.css';                 
-import {withRouter} from "react-router-dom";                                             
+import './AdminLogin.css';                                                           
 import axios from "axios";
 import ErrorImage from '../../images/error.svg';                                                  
                                                 
@@ -24,7 +23,7 @@ inputItemChanged=(e)=>{
 }
 validateOnFocusOut=(e)=>{
   //  console.log(e.target.name);
-  if(e.target.name=='email'){
+  if(e.target.name==='email'){
         if(!this.emailValidator(this.state.email)){
           this.setState({emailErrorShow:''});
       }else{
@@ -32,7 +31,7 @@ validateOnFocusOut=(e)=>{
       }
   }
   
-   if(e.target.name=="password"){
+   if(e.target.name==="password"){
       if(this.state.password===''){
         this.setState({passwordErrorShow:''});
         }else{

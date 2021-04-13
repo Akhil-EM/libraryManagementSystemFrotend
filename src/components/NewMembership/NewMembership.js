@@ -1,7 +1,7 @@
 import React from 'react';                      
 import './NewMembership.css';                 
 import ErrorImage from '../../images/error.svg';                                              
-import axios from 'axios';
+import MembersService from '../../service/members.service'    
 
                                                 
 class NewMembership extends React.Component { 
@@ -118,31 +118,31 @@ communicateWithServer=()=>{
     this.showSpinner();
 
     let library_id=localStorage.getItem('userid');
-    axios.post("https://manage-library-backend.herokuapp.com/members/create",{
-      memberId:this.state.memberId,
-      libraryId:library_id,
-      name:this.state.name,
-      email:this.state.email,
-      password:this.state.password})
-    .then( (response)=>{
-        this.hideSpinner();          
-        let feedback=response.data;
-
-          //console.log(feedback);
-        if(feedback.status=='error'){
-            this.setState({memberCreationErrorDisplay:''});
-        }
-        if(feedback.status=='success'){
-            this.setState({memberCreationSuccessDisplay:'',name:'',memberId:'',email:'',password:''});
-
-        }
+    let member_create_credentials={memberId:this.state.memberId,
+                                    libraryId:library_id,
+                                    name:this.state.name,
+                                    email:this.state.email,
+                                    password:this.state.password}
+    
+    MembersService.createMember(member_create_credentials)
+            .then(response => {
+                this.hideSpinner();          
+                let feedback=response.data;
         
+                  //console.log(feedback);
+                if(feedback.status==='error'){
+                    this.setState({memberCreationErrorDisplay:''});
+                }
+                if(feedback.status==='success'){
+                    this.setState({memberCreationSuccessDisplay:'',name:'',memberId:'',email:'',password:''});
         
-    })
-    .catch((error)=>{
-          //console.log(error);
-        this.hideSpinner();
-    });
+                }
+
+            })
+            .catch(e => {
+               this.hideSpinner();
+            });
+  
   }
 
 render() {                                      

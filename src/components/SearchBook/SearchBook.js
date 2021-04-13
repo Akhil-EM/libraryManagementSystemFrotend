@@ -1,9 +1,8 @@
 import React from 'react';                      
 import './SearchBook.css';  
-import ErrorImage from '../../images/error.svg';                                              
-import axios from 'axios';               
+import ErrorImage from '../../images/error.svg';              
 import BookCard from "../BookCard/BookCard";                                               
-                                                
+import Handlebook from "../../service/book.service"                                               
 class SearchBook extends React.Component { 
   constructor(){
     super();
@@ -86,41 +85,41 @@ communicateServer=()=>{
    this.showSpinner();
    this.setState({bookNotFoundError:'none',bookResultArray:[]})
    let library_id=localStorage.getItem('userid');
-   axios.post("https://manage-library-backend.herokuapp.com/books/search",{
+   let book_search_credentials={
     libraryId:library_id,
     searchBy:this.state.searchBy,
-    searchKey:this.state.searchKey
-    })
-   .then( (response)=>{
-       this.hideSpinner()        ;
-       let feedback=response.data;
-       this.setState({resultsDisplay:''});
-        // console.log(feedback);
-       if(feedback.status==='error'){
-          this.setState({bookNotFoundError:'',error_message:'something went wrong try again.!!'});
-       }
-       if(feedback.status==='success'){
-            if((feedback.books).length===0){
-              this.setState({bookNotFoundError:'',error_message:'no book found !!'});
-            }else{
-                
-                this.setState({bookResultArray:feedback.books,booksContainerDisplay:''})
-            }
-       }
-       
-       
-   })
-   .catch((error)=>{
-        //console.log(error);
+    searchKey:this.state.searchKey}
 
-      this.hideSpinner();
-      this.setState({resultsDisplay:''})
-   });
+      Handlebook.searchBookByAnything(book_search_credentials)
+            .then(response => {
+                this.hideSpinner()        ;
+                let feedback=response.data;
+                this.setState({resultsDisplay:''});
+                // console.log(feedback);
+                if(feedback.status==='error'){
+                  this.setState({bookNotFoundError:'',error_message:'something went wrong try again.!!'});
+                }
+                if(feedback.status==='success'){
+                    if((feedback.books).length===0){
+                      this.setState({bookNotFoundError:'',error_message:'no book found !!'});
+                    }else{
+                        
+                        this.setState({bookResultArray:feedback.books,booksContainerDisplay:''})
+                    }
+                }
+            })
+            .catch(e => {
+                // console.error(e);
+                this.hideSpinner();
+                this.setState({resultsDisplay:''})
+            });
+   
 
 
 
 
 }
+
 render() {                                      
   return (                                      
           <div className="SearchBook" >  

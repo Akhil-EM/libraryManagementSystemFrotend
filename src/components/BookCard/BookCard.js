@@ -1,6 +1,5 @@
 import React from 'react';                      
-import './BookCard.css';                 
-import axios from 'axios';                                                
+import './BookCard.css';                                                               
 import ErrorImage from '../../images/error.svg';  
 import HandleBook from '../../service/book.service'
 import membersService from '../../service/members.service';

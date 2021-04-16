@@ -80,10 +80,10 @@ render() {
                        <Route path="/list-members">
                            <ListMembers></ListMembers>
                        </Route>
-                       <Route path="/admin-login">
+                       <Route path="/admin">
                            <AdminLogin></AdminLogin>
                        </Route>
-                       <Route path="/admin-home">
+                       <Route path="/home-admin">
                            <AdminHome></AdminHome>
                        </Route>
                        <Route >

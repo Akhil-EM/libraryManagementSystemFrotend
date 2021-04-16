@@ -65,7 +65,7 @@ onFormSubmit= ()=>{
                 }
                 if(feedback.status==='success'){
                    this.saveUSerInformations(true,feedback.info._id,feedback.info.name);
-                  this.navigate('');
+                    this.navigate('');
                 }
 
             })

@@ -1,7 +1,7 @@
 import http from '../@axios';
 
 class MembersService{
-    url=""
+    url="members/"
     fetchAllMembers(_data){
         return http.post(this.url+"fetch-all",_data);
     }

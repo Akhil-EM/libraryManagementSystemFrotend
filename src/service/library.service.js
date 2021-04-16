@@ -1,7 +1,7 @@
 import http from '../@axios';
 
 class HandleLibrary{
-    url="";
+    url="library/";
     login(_data){
         
         return http.post(this.url+"login",_data);

@@ -6,9 +6,12 @@ class AdminService{
     }
     
     fetchLibraries(_data){
-        return http.post('/',_data);
+        return http.post('admin/fetch-librarys',_data);
     }
    
+    ActivateOrDeactivateLibrary(_data){
+        return http.post('admin/approve-libraryout ',_data);
+    }
     
 }
 

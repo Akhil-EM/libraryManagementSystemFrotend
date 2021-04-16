@@ -1,11 +1,13 @@
 import React from 'react';                      
 import './AdminLogin.css';                                                           
-import axios from "axios";
 import ErrorImage from '../../images/error.svg';                                                  
-                                                
+import AdminService from '../../service/admin.service'
+import {withRouter} from "react-router-dom"; 
+
+
 class AdminLogin extends React.Component { 
-   constructor(){
-     super();
+   constructor(props){
+     super(props);
      this.state={
         email:'',
         password:'',
@@ -64,15 +66,26 @@ submitForm=()=>{
     if(!validation_error){
       this.communicateWithServer()
     }
+
+            
+  
+}
+saveUSerInformations(is_logined,userid,user_name){
+   
+   localStorage.setItem('islogined',is_logined);
+   localStorage.setItem('username',user_name);
+   localStorage.setItem('userid',userid);
+   this.props.history.push('/home-admin');
    
 }
 
 communicateWithServer=()=>{
      this.setState({spinnerShow:'',loginButtonShow:'none',loginErrorShow:'none'});
-     axios.post("https://manage-library-backend.herokuapp.com/admin/login",{
-      email:this.state.email,
-      password:this.state.password})
-     .then( (response)=>{
+       
+      AdminService.login({
+        email:this.state.email,
+        password:this.state.password})
+        .then( (response)=>{
         this.setState({spinnerShow:'none',loginButtonShow:''});
          console.log(response.data);
          let feedback=response.data;
@@ -80,8 +93,9 @@ communicateWithServer=()=>{
            this.setState({loginErrorShow:''});
          }
          if(feedback.status==='success'){
-          //  this.saveUSerInformations(true,feedback.info._id,feedback.info.name);
-          //  this.navigate('');
+            this.saveUSerInformations(true,feedback.info._id,feedback.info.email);
+            
+             
          }
          
      })
@@ -152,5 +166,5 @@ render() {
  }                                              
  }                                              
                                                 
-                                                
-export default AdminLogin;                 
+
+export default withRouter(AdminLogin);   

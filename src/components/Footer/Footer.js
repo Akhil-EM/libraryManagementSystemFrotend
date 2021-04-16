@@ -5,7 +5,7 @@ import './Footer.css';
 class Footer extends React.Component { 
 render() { 
   let fullUrl=window.location.href;
-  if(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0){
+  if(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0 || fullUrl.indexOf('/admin')>0){
     // console.log('yes');
      return(<div></div>);
    }else{

@@ -1,7 +1,8 @@
 import React from 'react';                      
-import './LibraryTableCheck.css';                 
-import axios from 'axios';                                               
-                                                
+import './LibraryTableCheck.css';                                                               
+import AdminService from '../../service/admin.service'          
+
+
 class LibraryTableCheck extends React.Component { 
   constructor(props){
     super(props);
@@ -39,10 +40,12 @@ class LibraryTableCheck extends React.Component {
 
 
      this.setState({spinnerShow:'',buttonShow:'none',successMessage:'none',errorMessage:'none'});
-      axios.post("https://manage-library-backend.herokuapp.com/admin/approve-library",{
+      
+      
+      AdminService.ActivateOrDeactivateLibrary({
         libraryId:this.state.libarayId,
         isActive:activate_or_deactivate
-        })
+      })
       .then( (response)=>{
            this.setState({spinnerShow:'none',buttonShow:''});
               let feedback=response.data;

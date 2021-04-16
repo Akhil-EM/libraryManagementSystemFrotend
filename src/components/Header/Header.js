@@ -1,16 +1,16 @@
 import React from 'react';                      
 import './Header.css';                 
-import {withRouter} from "react-router-dom";
-import HandleBook from "../../service/book.service"                                       
-import axios from 'axios'; 
+import { withRouter} from "react-router-dom";
+import HandleBook from "../../service/book.service"                                      
 
+var fullUrl=window.location.href;
 
 
 class Header extends React.Component { 
-  
+
   constructor(props){
     super(props);
-
+    
     this.state={
       searchDisplay:"none",
       logoutMessageDisplay:'none',
@@ -20,26 +20,29 @@ class Header extends React.Component {
       searchButtonDisplay:'',
       searchBookNotFoundErrorDisplay:'none',
       somethingWentWrongErrorDisplay:'none',
-      searchScrollerDisplay:'none'
+      searchScrollerDisplay:'none',
+    
     }
-    this.checkLoginStatus();
+   
+    
   }
+
 
   checkLoginStatus(){
     let is_logined=localStorage.getItem('islogined');
-    let fullUrl=window.location.href;
-    if(!(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0)){
-      if(!is_logined){
-        this.props.history.push(`/login`);
+    
+    // Redirect un authorized user if url path not matching login or signup or admin
+
+    if(!(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0 || fullUrl.indexOf('/admin')>0)){
+        if(!is_logined){
+          this.props.history.push(`/login`);
+        
+        }
        
     }
-       
-     }
     
  }
-  // searchBook=()=>{
-  //      this.setState({searchDisplay:'inline'});
-  // }
+ 
   closeSeachBox=()=>{
     this.setState({searchDisplay:'none'})
   }
@@ -55,12 +58,20 @@ class Header extends React.Component {
    this.setState({logoutMessageDisplay:'none'});
  }
  logOutUser=(e)=>{
+   console.info(localStorage.getItem('username'))
+   if(localStorage.getItem('username')=='admin@gmail.com'){
+     console.log('inside if')
+      localStorage.removeItem("islogined");
+      localStorage.removeItem("username");
+      localStorage.removeItem("userid");
+      this.props.history.push(`/admin`);
+   }else{
     localStorage.removeItem("islogined");
     localStorage.removeItem("username");
     localStorage.removeItem("userid");
-    
-    
     this.props.history.push(`/login`);
+   }
+    
     this.setState({logoutMessageDisplay:'none'});
  }
 
@@ -126,9 +137,9 @@ class Header extends React.Component {
     this.setState({searchSpinnerDisplay:'none',searchButtonDisplay:''});
  }
 render() {     
-  let fullUrl=window.location.href;
-  if(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0){
-    // console.log('yes');
+  
+  if(fullUrl.indexOf('/login')>0 || fullUrl.indexOf('/signup')>0 || fullUrl.indexOf('/admin')>0){
+    
      return(<div></div>);
    }
   
@@ -143,9 +154,9 @@ render() {
                 </button>
 
                 <div className="collapse navbar-collapse ml-5" id="navbarTogglerDemo02">
+                 
                 
-                
-                      <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
+                      <ul className="navbar-nav mr-auto mt-2 mt-lg-0" style={{display:((fullUrl.indexOf('/home-admin')>0)?'none':'flex')}}>
                       <li className="nav-item">
                           <a className="nav-link" ><p className="nav-item-cst" onClick={()=>this.navigteTo('')}>Home</p></a>
                         </li>
@@ -176,12 +187,17 @@ render() {
                       </ul>
                  
                   
-                  <div className="d-flex">
-                        <input className="input-search"   type="search" name="searchKey" onChange={this.onInputChange} placeholder="Book name"></input>
-                    <div>
-                         <button className="button-search" style={{display:this.state.searchButtonDisplay}}  onClick={this.searchBook} type="submit">Search</button>
-                         <div className="spinner-border   spinner text-light" style={{display:this.state.searchSpinnerDisplay}}  role="status"></div>
+                  <div style={{display:((fullUrl.indexOf('/home-admin')>0)?'none':'flex')}}>
+                    <div className="d-flex" >
+                          <input className="input-search"   type="search" name="searchKey" onChange={this.onInputChange} placeholder="Book name"></input>
+                      <div>
+                          <button className="button-search" style={{display:this.state.searchButtonDisplay}}  onClick={this.searchBook} type="submit">Search</button>
+                          <div className="spinner-border   spinner text-light" style={{display:this.state.searchSpinnerDisplay}}  role="status"></div>
+                      </div>
                     </div>
+                  </div>
+                  <div style={{display:((fullUrl.indexOf('/home-admin')>0)?'flex':'none')}}>  
+                    <a className="nav-link text-white "onClick={this.logoutBoxShow}><p className="nav-item-cst" >Logout </p></a>   
                   </div>
                 </div>
               </nav> 
@@ -224,7 +240,7 @@ render() {
                     
               </div>
               
-              {/*  */}
+             
                 <div className="error-message " style={{display:this.state.logoutMessageDisplay}}>
                       <h3 className="mt-3">Do you want to logout ?</h3>
                       <div className="d-flex justify-content-around mt-5">

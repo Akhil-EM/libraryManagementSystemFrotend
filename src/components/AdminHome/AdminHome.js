@@ -1,7 +1,9 @@
 import React from 'react';                      
 import './AdminHome.css';                 
- import axios from 'axios';
- import Check from "../LibraryTableCheck/LibraryTableCheck";
+import Check from "../LibraryTableCheck/LibraryTableCheck";
+import AdminService from '../../service/admin.service'
+
+
 class AdminHome extends React.Component { 
   constructor(){
     super();
@@ -22,13 +24,13 @@ class AdminHome extends React.Component {
 
  
  loadPreData(){
-  axios.post("https://manage-library-backend.herokuapp.com/admin/fetch-librarys",{
-    })
+  
+   AdminService.fetchLibraries()
    .then( (response)=>{
           this.setState({spinnerShow:'none',tableShow:''});
           let feedback=response.data;
-         
-          console.log(feedback);
+          
+          // console.log(feedback);
           
           if((feedback.info).length===0){
             this.setState({libarysNotFoundShow:''});
@@ -40,13 +42,14 @@ class AdminHome extends React.Component {
        
    })
    .catch((error)=>{ 
+    
    });
 }
 render() {
                                         
   return (                                      
           <div className="AdminHome" >    
-             <h1 className="text-center m-5 font-weight-bold"> REGISTERED LIBRARY'S</h1> 
+             <h1 className="text-center m-5 font-weight-bold"> REGISTERED LIBRARIES</h1> 
              
              <br></br>
             

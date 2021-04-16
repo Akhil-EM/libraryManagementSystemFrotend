@@ -24,7 +24,7 @@ class Header extends React.Component {
     
     }
    
-    
+    this.checkLoginStatus();
   }
 
 

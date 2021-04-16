@@ -1,13 +1,14 @@
 import http from '../@axios';
 
 class HandleLibrary{
+    url="";
     login(_data){
         
-        return http.post("library/login",_data);
+        return http.post(this.url+"login",_data);
     }
     
     createLibrary(_data){
-        return http.post("library/register",_data);
+        return http.post(this.url+"register",_data);
     }
 }
 

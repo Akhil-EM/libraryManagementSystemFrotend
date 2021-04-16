@@ -1,16 +1,17 @@
 import http from '../@axios';
 
 class AdminService{
+      url="admin/"
     login(_data){
-        return http.post("admin/login",_data);
+        return http.post(this.url+"login",_data);
     }
     
     fetchLibraries(_data){
-        return http.post('admin/fetch-librarys',_data);
+        return http.post(this.url+'fetch-librarys',_data);
     }
    
     ActivateOrDeactivateLibrary(_data){
-        return http.post('admin/approve-library',_data);
+        return http.post(this.url+'approve-libraryout',_data);
     }
     
 }
